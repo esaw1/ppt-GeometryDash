@@ -1,5 +1,6 @@
 package geometrydash;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class GeometryDash {
@@ -10,8 +11,24 @@ public class GeometryDash {
      * @return true if the play completes the level and false otherwise
      */
     public static boolean isSuccessfulPlay(String level, String play) {
-        // TODO: Implement this method
-        return false;
+        int position = 0;
+        boolean success = true;
+        for (char c : play.toCharArray()) {
+            if (c == '1') {
+                position++;
+            } else if (c == '2') {
+                position += 2;
+            } else if (c == '3') {
+                position += 3;
+            }
+            if (level.toCharArray()[position] == '^') {
+                success = false;
+            }
+        }
+        if (position != level.length() - 1) {
+            success = false;
+        }
+        return success;
     }
 
     /**
@@ -26,8 +43,40 @@ public class GeometryDash {
      */
     public static Set<String> successfulPlays(String level, Set<String> possiblePlays,
                                               int startingEnergy, int targetRestingEnergy) {
-        // TODO: Implement this method
-        return null;
+        Set<String> successfulPlays = new HashSet<>();
+        for (String play : possiblePlays) {
+            boolean success = true;
+            int position = 0;
+            int energy = startingEnergy;
+            for (char c : play.toCharArray()) {
+                if (c == '0' && energy < 3) {
+                    energy++;
+                } else if (c == '1') {
+                    position++;
+                    energy -= 1;
+                } else if (c == '2') {
+                    position += 2;
+                    energy -= 2;
+                } else if (c == '3') {
+                    position += 3;
+                    energy -= 3;
+                }
+                if (position > level.length() - 1) {
+                    success = false;
+                    break;
+                }
+                if (level.toCharArray()[position] == '^') {
+                    success = false;
+                    break;
+                } else if (level.toCharArray()[position] == '*') {
+                    position += 4;
+                }
+            }
+            if (success && energy >= targetRestingEnergy && position == level.length() - 1) {
+                successfulPlays.add(play);
+            }
+        }
+        return successfulPlays;
     }
 
     /**
